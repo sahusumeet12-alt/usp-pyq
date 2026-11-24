@@ -2,6 +2,18 @@
 <html lang="en"><head><script>if(/github\.io$/.test(location.hostname))location.replace("https://usp-pyq.netlify.app"+location.pathname.replace(/^\/usp-pyq/,"")+location.search+location.hash)</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Class X Maths – Board PYQs</title>
 <link rel="stylesheet" href="katex.css"><style>
+
+.ftog{display:none}
+@media(max-width:700px){
+.bar{padding:6px 0;transition:transform .25s}.bar.hid{transform:translateY(-105%)}
+.tabs{padding:0 0 5px;margin-bottom:3px}.tab{padding:5px 10px!important;font-size:.8rem!important}.tab small{font-size:.68rem!important}
+.bar #fy,.bar #fm,.bar #fs{display:none}.bar.fo #fy,.bar.fo #fm,.bar.fo #fs{display:flex}
+.bar .row{margin:3px 0!important;gap:5px!important}.bar .row span{font-size:.75rem!important;min-width:52px}.chip{padding:3px 10px!important;font-size:.76rem!important}
+.ftog{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 11px;font-size:.78rem;font-weight:700;cursor:pointer;flex:none}
+.bar.fo .ftog{background:var(--navy);color:#fff;border-color:var(--navy)}
+.prog{flex-wrap:nowrap!important;overflow-x:auto;gap:6px!important;font-size:.74rem!important;margin:4px 0 0!important;scrollbar-width:none;white-space:nowrap}.prog::-webkit-scrollbar{display:none}
+.prog .pbar{min-width:50px;flex:1}.prog .act{padding:4px 9px!important;font-size:.74rem!important;flex:none}
+}
 .tab.lk{opacity:.8}.tab .lki{margin-left:4px}
 .paybox{max-width:640px;margin:18px auto;background:#fff;border:2px solid #c9a55a;border-radius:16px;overflow:hidden;box-shadow:0 8px 28px rgba(22,48,90,.15);color:#1d2433}
 .paybox .ph{background:linear-gradient(135deg,#16305a,#0b1a36);color:#fff;padding:20px 22px;text-align:center}
@@ -132,7 +144,7 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}}
 const FS=[['all','All'],['todo','Not practised'],['c','✓ Correct'],['w','✗ Wrong'],['star','★ Starred']];
 function passS(d){return fs=='all'||(fs=='todo'&&!P.s[d.id])||(fs=='star'&&P.star[d.id])||P.s[d.id]==fs}
 function prog(){const n=DATA.length,c=DATA.filter(d=>P.s[d.id]=='c').length,w=DATA.filter(d=>P.s[d.id]=='w').length,s=DATA.filter(d=>P.star[d.id]).length;
- document.getElementById('prog').innerHTML=`<span>Practised <span class="pnum">${c+w}/${n}</span></span><div class="pbar"><i class="c" style="width:${c/n*100}%"></i><i class="w" style="width:${w/n*100}%"></i></div><span class="pc">✓ ${c}</span><span class="pw">✗ ${w}</span><span class="ps">★ ${s}</span>${P.last?'<button class="act go" id="resume">▶ Resume</button>':''}<button class="act" id="nexttodo">Next unpractised</button><button class="act" id="reset">Reset</button>`;
+ document.getElementById('prog').innerHTML=`<button class="ftog" onclick="document.querySelector('.bar').classList.toggle('fo')">⚙ Filters${(fy!='all'||fm!='all'||fs!='all')?' •':''}</button><span>Practised <span class="pnum">${c+w}/${n}</span></span><div class="pbar"><i class="c" style="width:${c/n*100}%"></i><i class="w" style="width:${w/n*100}%"></i></div><span class="pc">✓ ${c}</span><span class="pw">✗ ${w}</span><span class="ps">★ ${s}</span>${P.last?'<button class="act go" id="resume">▶ Resume</button>':''}<button class="act" id="nexttodo">Next unpractised</button><button class="act" id="reset">Reset</button>`;
  const r=document.getElementById('resume');if(r)r.onclick=()=>goTo(P.last);
  document.getElementById('nexttodo').onclick=()=>{const order=[...document.querySelectorAll('article[data-id]')].map(a=>a.dataset.id);const all=order.length?order:DATA.map(d=>d.id);
   const i=Math.max(0,all.indexOf(P.last));const nx=all.slice(i).concat(all.slice(0,i)).find(id=>!P.s[id]);if(nx)goTo(nx);else alertMsg('All questions practised! 🎉')};
@@ -202,6 +214,7 @@ function draw(){if(CHS[CI].lock&&!MKEY){chips('fy',years,v=>v,()=>fy,v=>fy=v);ch
  const L=document.getElementById('list');L.innerHTML=h||'<p>No questions for this filter.</p>';}
 document.getElementById('all').onclick=e=>{openAll=!openAll;e.target.textContent=openAll?'Hide all solutions':'Show all solutions';draw()};
 initKey().then(()=>{setCh(Math.min(P.ch||0,CHS.length-1),true);draw();recheck();});
+let LY=0;addEventListener('scroll',()=>{const y=scrollY,b=document.querySelector('.bar');if(innerWidth>700||b.classList.contains('fo')){b.classList.remove('hid');LY=y;return}if(y>LY+8&&y>250)b.classList.add('hid');else if(y<LY-8)b.classList.remove('hid');LY=y},{passive:true});
 let tmr;addEventListener('scroll',()=>{clearTimeout(tmr);tmr=setTimeout(()=>{const off=document.querySelector('.bar').offsetHeight+20;const a=[...document.querySelectorAll('article[data-id]')].find(e=>e.getBoundingClientRect().bottom>off+60);if(a&&scrollY>200){P.last=a.dataset.id;save();if(!document.getElementById('resume'))prog()}},400)},{passive:true});
 </script><script>(function(){var n=0,s=0;CHS.forEach(function(c){n+=c.data.length;c.data.forEach(function(d){s+=(+d.marks||0)})});
 document.getElementById('tot').innerHTML='📚 Total <b>'+n.toLocaleString('en-IN')+'</b> PYQs <span>· '+CHS.length+' chapters · '+s.toLocaleString('en-IN')+' marks · CBSE Board 2023–2026 (main + compartment)</span>'+(localStorage.getItem('usp-pyq-mk')?'<span class="unl">✓ Full version</span>':'<span class="unl" style="background:#d32630">First 3 chapters free · Unlock all ₹99</span>');})();</script>
