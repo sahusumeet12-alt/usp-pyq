@@ -3,13 +3,24 @@
 <title>Class X Maths PYQs</title>
 <link rel="stylesheet" href="katex.css"><style>
 
+@media(max-width:700px){header .stats,header .ucon{display:none!important}.tot{display:flex!important;flex-wrap:nowrap!important;white-space:nowrap;overflow-x:auto;scrollbar-width:none}.tot::-webkit-scrollbar{display:none}
+header .top{flex-wrap:nowrap!important}.links{display:flex;gap:4px;flex:none}.links a{margin:0!important;padding:3px 8px!important;font-size:.95rem!important}.links a .lt{display:none}header h1{line-height:1.2}}
+
+header .top{padding:4px 0 0!important}.ubadge{padding:3px 6px!important}.ubadge span{font-size:.72rem!important}
+.u1{font-size:clamp(1rem,4vw,1.35rem)!important}.u1 em{font-size:clamp(1.2rem,4.8vw,1.65rem)!important}.u2{font-size:clamp(.6rem,2.2vw,.72rem)!important;margin-top:1px!important}
+.links a{padding:2px 8px!important;font-size:.7rem!important}.uorn{display:none!important}
+header h1{font-size:clamp(.95rem,3.6vw,1.2rem)!important;margin:3px 0 0!important}.sig{font-size:1.05rem!important;margin:0!important}.sig small{font-size:.7rem!important}
+header .sub{display:none!important}.tot{font-size:.72rem!important;padding:2px 9px!important;margin:3px 0 4px!important}.tot b{font-size:.9rem!important}.tot span{font-size:.66rem!important}
+.stats{padding-bottom:5px!important;gap:4px!important}.stat{font-size:.66rem!important;padding:1px 7px!important}.stat b{font-size:.8rem!important}
+.ucon{font-size:.66rem!important;padding:2px 8px!important}.ubar{height:3px!important}
+
 .ftog{display:none}
 @media(max-width:700px){
 .bar{padding:6px 0;transition:transform .25s}.bar.hid{transform:translateY(-105%)}
 .tabs{padding:0 0 5px;margin-bottom:3px}.tab{padding:5px 10px!important;font-size:.8rem!important}.tab small{font-size:.68rem!important}
-.bar #fy,.bar #fm,.bar #fs{display:none}.bar.fo #fy,.bar.fo #fm,.bar.fo #fs{display:flex}
+
 .bar .row{margin:3px 0!important;gap:5px!important}.bar .row span{font-size:.75rem!important;min-width:52px}.chip{padding:3px 10px!important;font-size:.76rem!important}
-.ftog{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 11px;font-size:.78rem;font-weight:700;cursor:pointer;flex:none}
+.ftog{display:none!important;align-items:center;gap:4px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:4px 11px;font-size:.78rem;font-weight:700;cursor:pointer;flex:none}
 .bar.fo .ftog{background:var(--navy);color:#fff;border-color:var(--navy)}
 .prog{flex-wrap:nowrap!important;overflow-x:auto;gap:6px!important;font-size:.74rem!important;margin:4px 0 0!important;scrollbar-width:none;white-space:nowrap}.prog::-webkit-scrollbar{display:none}
 .prog .pbar{min-width:50px;flex:1}.prog .act{padding:4px 9px!important;font-size:.74rem!important;flex:none}
@@ -210,6 +221,6 @@ function draw(){if(CHS[CI].lock&&!MKEY){chips('fy',years,v=>v,()=>fy,v=>fy=v);ch
  const L=document.getElementById('list');L.innerHTML=h||'<p>No questions for this filter.</p>';}
 document.getElementById('all').onclick=e=>{openAll=!openAll;e.target.textContent=openAll?'Hide all solutions':'Show all solutions';draw()};
 initKey().then(()=>{setCh(Math.min(P.ch||0,CHS.length-1),true);draw();recheck();});
-let LY=0;addEventListener('scroll',()=>{const y=scrollY,b=document.querySelector('.bar');if(innerWidth>700||b.classList.contains('fo')){b.classList.remove('hid');LY=y;return}if(y>LY+8&&y>250)b.classList.add('hid');else if(y<LY-8)b.classList.remove('hid');LY=y},{passive:true});
+let LY=0;addEventListener('scroll',()=>{const y=scrollY,b=document.querySelector('.bar');if(y>LY+8&&y>250)b.classList.add('hid');else if(y<LY-8)b.classList.remove('hid');LY=y},{passive:true});
 let tmr;addEventListener('scroll',()=>{clearTimeout(tmr);tmr=setTimeout(()=>{const off=document.querySelector('.bar').offsetHeight+20;const a=[...document.querySelectorAll('article[data-id]')].find(e=>e.getBoundingClientRect().bottom>off+60);if(a&&scrollY>200){P.last=a.dataset.id;save();if(!document.getElementById('resume'))prog()}},400)},{passive:true});
 </script></body></html>
