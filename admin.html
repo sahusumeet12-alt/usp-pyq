@@ -25,7 +25,6 @@ th{background:var(--n);color:#fff;text-align:left;padding:9px}td{padding:8px 9px
 td .acts{display:flex;gap:5px;flex-wrap:wrap}.pill{display:inline-block;border-radius:99px;padding:2px 9px;font-size:.78rem;font-weight:700}
 .on{background:#e3f5ea;color:var(--ok)}.off{background:#fde8e8;color:var(--bad)}.exp{background:#fff1d6;color:#9a6a00}.new{background:#eef2fb;color:var(--n)}
 code{font:700 1rem monospace;letter-spacing:2px}
-.ctab{display:flex;gap:8px;margin:6px 0 0}.ctab button{flex:1;padding:12px;border-radius:12px;border:2px solid var(--n);background:#fff;color:var(--n);font-weight:800;font-size:1.05rem;cursor:pointer}.ctab button.on{background:var(--n);color:#fff}
 #login{max-width:380px;margin:80px auto}.hide{display:none}
 @media(max-width:800px){.row{grid-template-columns:1fr 1fr}.tbl{overflow-x:auto}}
 </style></head><body>
@@ -35,8 +34,7 @@ code{font:700 1rem monospace;letter-spacing:2px}
 <input id="pw" type="password" placeholder="Password" onkeydown="if(event.key=='Enter')login()"><button class="btn navy" style="margin-top:10px;width:100%" onclick="login()">Sign in</button><div class="msg" id="lmsg"></div></div>
 
 <div id="app" class="hide">
-<div class="ctab"><button id="c10" class="on" onclick="setCls('10')">Class X Maths</button><button id="c12" onclick="setCls('12')">Class XII Maths</button></div>
-<h2>Give access <small id="clsl" style="font-size:.6em;color:var(--g)">· Class X</small></h2><p class="sub">Add the email a student gave after paying ₹99. Send them the activation code on WhatsApp.</p>
+<h2>Give access</h2><p class="sub">Add the email a student gave after paying ₹99. Send them the activation code on WhatsApp.</p>
 <div class="box">
  <div class="row">
   <div><label>Email</label><input id="em" type="email" placeholder="student@gmail.com"></div>
@@ -55,16 +53,14 @@ code{font:700 1rem monospace;letter-spacing:2px}
 </div>
 </main>
 <script>
-let CLS=sessionStorage.getItem('acls')||'10';
-const appUrl=()=>location.origin+(CLS=='12'?'/class12/':'/');
-function setCls(c){CLS=c;sessionStorage.setItem('acls',c);document.getElementById('c10').classList.toggle('on',c=='10');document.getElementById('c12').classList.toggle('on',c=='12');document.getElementById('clsl').textContent=c=='12'?'· Class XII':'· Class X';document.getElementById('res').innerHTML='';S=[];render();load()}
+const APP_URL=location.origin+'/';
 let PW=sessionStorage.getItem('ap')||'',S=[];
-async function api(o){const r=await fetch('/.netlify/functions/admin',{method:'POST',headers:{'content-type':'application/json','x-admin-pass':PW},body:JSON.stringify(Object.assign({cls:CLS},o))});const j=await r.json().catch(()=>({error:'Server error'}));if(r.status==401)throw new Error('Wrong password');if(j.error)throw new Error(j.error);return j}
+async function api(o){const r=await fetch('/.netlify/functions/admin',{method:'POST',headers:{'content-type':'application/json','x-admin-pass':PW},body:JSON.stringify(o)});const j=await r.json().catch(()=>({error:'Server error'}));if(r.status==401)throw new Error('Wrong password');if(j.error)throw new Error(j.error);return j}
 async function login(){PW=document.getElementById('pw').value||PW;const m=document.getElementById('lmsg');m.textContent='Checking…';
  try{await api({action:'login'});sessionStorage.setItem('ap',PW);document.getElementById('login').classList.add('hide');document.getElementById('app').classList.remove('hide');document.getElementById('out').classList.remove('hide');load()}catch(e){m.style.color='#c33';m.textContent=e.message}}
 const today=()=>new Date().toISOString().slice(0,10);
 const fmt=d=>d?new Date(d+'T00:00').toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}):'';
-function waLink(s){const t=`Hello ${s.name||''}! 🎉\nYour USP PYQ App (${CLS=='12'?'Class XII':'Class X'} Maths) full access is ready.\n\n👉 Open: ${appUrl()}\n📧 Email: ${s.email}\n🔑 Code: ${s.code}\n✅ Valid till: ${fmt(s.valid)}\n\nOpen any locked chapter, enter your email and code, and tap Unlock.\nDo not share your code (works on max 2 devices).\n– Unique Study Point, Indore`;
+function waLink(s){const t=`Hello ${s.name||''}! 🎉\nYour USP PYQ App (Class X Maths) full access is ready.\n\n👉 Open: ${APP_URL}\n📧 Email: ${s.email}\n🔑 Code: ${s.code}\n✅ Valid till: ${fmt(s.valid)}\n\nOpen any locked chapter, enter your email and code, and tap Unlock.\nDo not share your code (works on max 2 devices).\n– Unique Study Point, Indore`;
  const m=(s.mobile||'').replace(/\D/g,'');return 'https://wa.me/'+(m?(m.length==10?'91'+m:m):'')+'?text='+encodeURIComponent(t)}
 function resItem(s){return `<div class="ri"><div class="e"><b>${s.email}</b><span>${s.name?s.name+' · ':''}Valid till ${fmt(s.valid)}${s.existed?' · already existed (same code)':''}</span></div><div class="c">${s.code}</div><button class="btn ghost sm" onclick="copy(this,'${s.code}')">Copy</button><a class="btn navy sm" target="_blank" href="${waLink(s)}" style="text-decoration:none">Send on WhatsApp</a></div>`}
 function copy(b,t){navigator.clipboard.writeText(t);b.textContent='Copied'}
@@ -82,5 +78,5 @@ function render(){const q=document.getElementById('q').value.toLowerCase();const
  <button class="btn ghost sm" onclick="act('resetDevices','${s.email}')" title="Allow on new phone">Reset devices</button><button class="btn ghost sm" onclick="ext('${s.email}')">Extend</button><button class="btn ghost sm" onclick="if(confirm('Give a NEW code to ${s.email}? Old code will stop working.'))act('newCode','${s.email}')">New code</button></div></td></tr>`).join('')||'<tr><td colspan=6>No students yet.</td></tr>'}
 async function act(a,email,extra){try{await api(Object.assign({action:a,email},extra||{}));load()}catch(e){alert(e.message)}}
 function ext(email){const v=prompt('New valid-till date (YYYY-MM-DD)','2027-03-31');if(v&&/^\d{4}-\d\d-\d\d$/.test(v))act('extend',email,{valid:v})}
-if(PW)login();setTimeout(()=>{if(CLS=='12')setCls('12')},0);
+if(PW)login();
 </script></body></html>

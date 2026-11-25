@@ -5,7 +5,7 @@ export default async (req)=>{
   if(req.method!=="POST")return J({error:"POST only"},405);
   if(!process.env.ADMIN_PASSWORD||req.headers.get("x-admin-pass")!==process.env.ADMIN_PASSWORD)return J({error:"Wrong password"},401);
   let b;try{b=await req.json()}catch{b={}}
-  const st=getStore(String(b.cls||"")==="12"?"pyq-students-12":"pyq-students");const a=b.action;
+  const st=getStore("pyq-students");const a=b.action;
   if(a==="login")return J({ok:true});
   if(a==="list"){const {blobs}=await st.list();const out=[];for(const x of blobs){const r=await st.get(x.key,{type:"json"});if(r)out.push({email:x.key,...r})}
     out.sort((p,q)=>(q.created||"").localeCompare(p.created||""));return J({ok:true,students:out})}

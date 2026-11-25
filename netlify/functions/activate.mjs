@@ -1,6 +1,4 @@
 import { getStore } from "@netlify/blobs";
-import { createHmac } from "node:crypto";
-const mk12=()=>createHmac("sha256",Buffer.from(process.env.PYQ_MASTER_KEY||"","base64")).update("usp-class12").digest("base64");
 const J=(o,s=200)=>new Response(JSON.stringify(o),{status:s,headers:{"content-type":"application/json","access-control-allow-origin":"*","access-control-allow-headers":"content-type"}});
 const MAXDEV=2;
 export default async (req)=>{
@@ -9,7 +7,7 @@ export default async (req)=>{
   let b;try{b=await req.json()}catch{return J({error:"Bad request"},400)}
   const email=String(b.email||"").trim().toLowerCase(),code=String(b.code||"").replace(/\D/g,""),dev=String(b.device||"").slice(0,64);
   if(!email||!code||!dev)return J({ok:false,error:"Please enter your email and 6-digit code."});
-  const c12=String(b.cls||"")==="12";const st=getStore(c12?"pyq-students-12":"pyq-students");const r=await st.get(email,{type:"json"});
+  const st=getStore("pyq-students");const r=await st.get(email,{type:"json"});
   if(!r)return J({ok:false,error:"This email is not registered. Please WhatsApp 8103405051 after payment."});
   if((r.fails||0)>=10&&Date.now()-(r.failAt||0)<3600e3)return J({ok:false,error:"Too many wrong tries. Try again after 1 hour."});
   if(r.code!==code){r.fails=(r.fails||0)+1;r.failAt=Date.now();await st.setJSON(email,r);return J({ok:false,error:"Wrong code. Please check the code sent on WhatsApp."})}
@@ -22,5 +20,5 @@ export default async (req)=>{
     r.devices.push(dev);if(!r.activated)r.activated=new Date().toISOString();
   }
   r.fails=0;r.lastSeen=new Date().toISOString();await st.setJSON(email,r);
-  return J({ok:true,mk:c12?mk12():process.env.PYQ_MASTER_KEY,valid:r.valid,name:r.name||""});
+  return J({ok:true,mk:process.env.PYQ_MASTER_KEY,valid:r.valid,name:r.name||""});
 };
